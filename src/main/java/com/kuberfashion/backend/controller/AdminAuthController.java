@@ -26,22 +26,36 @@ public class AdminAuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<JwtAuthenticationResponse>> adminLogin(@Valid @RequestBody UserLoginDto loginDto) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginDto.getEmail(),
-                        loginDto.getPassword()
-                )
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginDto.getEmail(),
+                            loginDto.getPassword()
+                    )
+            );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        User principal = (User) authentication.getPrincipal();
-        if (principal.getRole() != User.Role.ADMIN) {
-            return new ResponseEntity<>(ApiResponse.error("Admin role required"), HttpStatus.FORBIDDEN);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            User principal = (User) authentication.getPrincipal();
+            
+            // Check role properly
+            if (principal.getRole() != User.Role.ADMIN) {
+                return new ResponseEntity<>(
+                    ApiResponse.error("Access denied. Admin privileges required."), 
+                    HttpStatus.FORBIDDEN
+                );
+            }
+
+            // Generate token
+            String jwt = tokenProvider.generateToken(authentication);
+            UserResponseDto userDto = new UserResponseDto(principal);
+            JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwt, userDto);
+            
+            return ResponseEntity.ok(ApiResponse.success("Admin login successful", response));
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                ApiResponse.error("Invalid credentials"), 
+                HttpStatus.UNAUTHORIZED
+            );
         }
-
-        String jwt = tokenProvider.generateToken(authentication);
-        UserResponseDto userDto = new UserResponseDto(principal);
-        JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwt, userDto);
-        return ResponseEntity.ok(ApiResponse.success("Login successful", response));
     }
 }

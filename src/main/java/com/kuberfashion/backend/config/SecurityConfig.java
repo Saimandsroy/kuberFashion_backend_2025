@@ -80,17 +80,10 @@ public class SecurityConfig {
                 // Public API endpoints
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/admin/auth/login").permitAll()
-                // Public web routes (for SPA entry points / static hosting scenarios)
-                .requestMatchers(
-                    "/", "/index.html", "/login", "/login.html", "/signup", "/admin/login", "/error",
-                    "/favicon.ico", "/manifest.json",
-                    "/assets/**", "/static/**", "/css/**", "/js/**", "/images/**",
-                    "/*.css", "/*.js", "/*.map", "/*.png", "/*.jpg", "/*.jpeg", "/*.svg", "/*.ico",
-                    "/**/*.css", "/**/*.js", "/**/*.map", "/**/*.png", "/**/*.jpg", "/**/*.jpeg", "/**/*.svg", "/**/*.ico"
-                ).permitAll()
                 .requestMatchers("/api/test/**").permitAll()
                 .requestMatchers("/api/products/**").permitAll()
                 .requestMatchers("/api/categories/**").permitAll()
+                .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/api/cart/**").authenticated()
                 .requestMatchers("/api/wishlist/**").authenticated()
                 .requestMatchers("/api/orders/**").authenticated()
@@ -98,15 +91,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/users/change-password").authenticated()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
-            )
-            // Accept Supabase Bearer JWTs via OAuth2 Resource Server
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())));
+            );
 
         http.authenticationProvider(authenticationProvider());
-        // Enrich Authentication with DB user + role after bearer token authentication
-        http.addFilterAfter(dbUserRoleEnricherFilter, BearerTokenAuthenticationFilter.class);
-        // Keep legacy JWT auth filter for backwards compatibility (local JWTs)
-        // Place it BEFORE BearerTokenAuthenticationFilter so local JWTs are processed first
+        // Use only custom JWT authentication filter
         http.addFilterBefore(jwtAuthenticationFilter(), BearerTokenAuthenticationFilter.class);
 
         return http.build();
@@ -117,12 +105,15 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList(
             "http://localhost:*", 
-            "http://127.0.0.1:*"
+            "http://127.0.0.1:*",
+            "http://localhost:5173",
+            "http://localhost:3000"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

@@ -3,6 +3,8 @@ package com.kuberfashion.backend.controller;
 import com.kuberfashion.backend.dto.ApiResponse;
 import com.kuberfashion.backend.dto.ProductResponseDto;
 import com.kuberfashion.backend.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +18,22 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {
     
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+    
     @Autowired
     private ProductService productService;
     
     @GetMapping
     public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getAllProducts() {
-        List<ProductResponseDto> products = productService.getAllProducts();
-        return ResponseEntity.ok(ApiResponse.success("Products retrieved successfully", products));
+        logger.info("📦 GET /api/products - Fetching all products");
+        try {
+            List<ProductResponseDto> products = productService.getAllProducts();
+            logger.info("✅ Successfully retrieved {} products", products.size());
+            return ResponseEntity.ok(ApiResponse.success("Products retrieved successfully", products));
+        } catch (Exception e) {
+            logger.error("❌ Error fetching products: {}", e.getMessage(), e);
+            throw e;
+        }
     }
     
     @GetMapping("/{id}")

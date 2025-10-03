@@ -32,20 +32,8 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Create admin user if it doesn't exist
-        if (!userRepository.existsByEmail("admin@kuberfashion.com")) {
-            User admin = new User();
-            admin.setFirstName("Admin");
-            admin.setLastName("User");
-            admin.setEmail("admin@kuberfashion.com");
-            admin.setPhone("1234567890");
-            admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setRole(User.Role.ADMIN);
-            admin.setEnabled(true);
-            
-            userRepository.save(admin);
-            System.out.println("Admin user created: admin@kuberfashion.com / admin123");
-        }
+        // CRITICAL: Create admin user FIRST before anything else
+        initializeAdminUser();
         
         // Create test user if it doesn't exist
         if (!userRepository.existsByEmail("test@kuberfashion.com")) {
@@ -59,7 +47,7 @@ public class DataInitializer implements CommandLineRunner {
             testUser.setEnabled(true);
             
             userRepository.save(testUser);
-            System.out.println("Test user created: test@kuberfashion.com / test123");
+            System.out.println("✅ Test user created: test@kuberfashion.com / test123");
         }
 
         // Initialize categories
@@ -67,6 +55,27 @@ public class DataInitializer implements CommandLineRunner {
         
         // Initialize sample products
         initializeSampleProducts();
+    }
+    
+    private void initializeAdminUser() {
+        // Check if admin exists
+        if (!userRepository.existsByEmail("admin@kuberfashion.com")) {
+            User admin = new User();
+            admin.setFirstName("Admin");
+            admin.setLastName("User");
+            admin.setEmail("admin@kuberfashion.com");
+            admin.setPhone("1234567890");
+            admin.setPassword(passwordEncoder.encode("admin123"));
+            admin.setRole(User.Role.ADMIN);
+            admin.setEnabled(true);
+            
+            userRepository.save(admin);
+            System.out.println("✅ Admin user created successfully!");
+            System.out.println("   Email: admin@kuberfashion.com");
+            System.out.println("   Password: admin123");
+        } else {
+            System.out.println("✅ Admin user already exists");
+        }
     }
 
     private void initializeCategories() {
