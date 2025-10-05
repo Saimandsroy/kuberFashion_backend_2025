@@ -44,32 +44,6 @@ public class AdminController {
     @Autowired
     private SupabaseStorageService storageService;
 
-    // Dashboard Stats
-    @GetMapping("/stats")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> getDashboardStats() {
-        long totalUsers = userService.getTotalCustomers();
-        long activeUsers = userService.getActiveUsers();
-        long totalOrders = orderRepository.count();
-        long totalProducts = userRepository.count(); // This should be productRepository.count()
-        
-        // Calculate total revenue from delivered orders
-        BigDecimal totalRevenue = orderRepository.findAll().stream()
-            .filter(order -> order.getStatus() == Order.OrderStatus.DELIVERED)
-            .map(Order::getTotalAmount)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
-        Map<String, Object> stats = Map.of(
-            "totalUsers", totalUsers,
-            "activeUsers", activeUsers,
-            "totalOrders", totalOrders,
-            "totalProducts", totalProducts,
-            "totalRevenue", totalRevenue
-        );
-        
-        return ResponseEntity.ok(ApiResponse.success("Dashboard stats retrieved", stats));
-    }
-
     // Users
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
