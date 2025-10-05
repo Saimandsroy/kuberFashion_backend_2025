@@ -29,6 +29,10 @@ public class WishlistController {
     
     @GetMapping
     public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getUserWishlist(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         List<ProductResponseDto> wishlistItems = wishlistService.getUserWishlist(user.getId());
         return ResponseEntity.ok(ApiResponse.success("Wishlist retrieved successfully", wishlistItems));
     }
@@ -37,6 +41,10 @@ public class WishlistController {
     public ResponseEntity<ApiResponse<ProductResponseDto>> addToWishlist(
             @AuthenticationPrincipal User user,
             @PathVariable Long productId) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         ProductResponseDto product = wishlistService.addToWishlist(user.getId(), productId);
         return ResponseEntity.ok(ApiResponse.success("Product added to wishlist", product));
     }
@@ -45,6 +53,10 @@ public class WishlistController {
     public ResponseEntity<ApiResponse<ProductResponseDto>> addToWishlistWithBody(
             @AuthenticationPrincipal User user,
             @RequestBody AddToWishlistRequest request) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         ProductResponseDto product = wishlistService.addToWishlist(user.getId(), request.getProductId());
         return ResponseEntity.ok(ApiResponse.success("Product added to wishlist", product));
     }
@@ -53,12 +65,20 @@ public class WishlistController {
     public ResponseEntity<ApiResponse<String>> removeFromWishlist(
             @AuthenticationPrincipal User user,
             @PathVariable Long productId) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         wishlistService.removeFromWishlist(user.getId(), productId);
         return ResponseEntity.ok(ApiResponse.success("Product removed from wishlist"));
     }
     
     @DeleteMapping("/clear")
     public ResponseEntity<ApiResponse<String>> clearWishlist(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         wishlistService.clearWishlist(user.getId());
         return ResponseEntity.ok(ApiResponse.success("Wishlist cleared successfully"));
     }
@@ -67,12 +87,20 @@ public class WishlistController {
     public ResponseEntity<ApiResponse<Boolean>> isInWishlist(
             @AuthenticationPrincipal User user,
             @PathVariable Long productId) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         boolean isInWishlist = wishlistService.isInWishlist(user.getId(), productId);
         return ResponseEntity.ok(ApiResponse.success("Wishlist status checked", isInWishlist));
     }
     
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<Long>> getWishlistCount(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         long count = wishlistService.getWishlistCount(user.getId());
         return ResponseEntity.ok(ApiResponse.success("Wishlist count retrieved", count));
     }

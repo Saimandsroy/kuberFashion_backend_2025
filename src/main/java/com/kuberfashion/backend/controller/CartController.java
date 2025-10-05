@@ -22,6 +22,10 @@ public class CartController {
     
     @GetMapping
     public ResponseEntity<ApiResponse<List<CartItemDto>>> getCart(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         List<CartItemDto> cartItems = cartService.getCartItems(user.getId());
         return ResponseEntity.ok(ApiResponse.success("Cart retrieved successfully", cartItems));
     }
@@ -30,6 +34,10 @@ public class CartController {
     public ResponseEntity<ApiResponse<CartItemDto>> addToCart(
             @AuthenticationPrincipal User user,
             @Valid @RequestBody AddToCartRequest request) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         CartItemDto cartItem = cartService.addToCart(user.getId(), request.getProductId(), 
                 request.getQuantity(), request.getSize(), request.getColor());
         return ResponseEntity.ok(ApiResponse.success("Item added to cart", cartItem));
@@ -40,6 +48,10 @@ public class CartController {
             @AuthenticationPrincipal User user,
             @PathVariable Long itemId,
             @Valid @RequestBody UpdateCartItemRequest request) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         CartItemDto cartItem = cartService.updateCartItem(user.getId(), itemId, request.getQuantity());
         return ResponseEntity.ok(ApiResponse.success("Cart item updated", cartItem));
     }
@@ -48,18 +60,30 @@ public class CartController {
     public ResponseEntity<ApiResponse<String>> removeFromCart(
             @AuthenticationPrincipal User user,
             @PathVariable Long itemId) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         cartService.removeFromCart(user.getId(), itemId);
         return ResponseEntity.ok(ApiResponse.success("Item removed from cart"));
     }
     
     @DeleteMapping
     public ResponseEntity<ApiResponse<String>> clearCart(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         cartService.clearCart(user.getId());
         return ResponseEntity.ok(ApiResponse.success("Cart cleared successfully"));
     }
     
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<Long>> getCartCount(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.status(401)
+                .body(ApiResponse.error("User not authenticated"));
+        }
         long count = cartService.getCartCount(user.getId());
         return ResponseEntity.ok(ApiResponse.success("Cart count retrieved", count));
     }

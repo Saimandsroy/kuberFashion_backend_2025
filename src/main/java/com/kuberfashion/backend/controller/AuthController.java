@@ -141,6 +141,16 @@ public class AuthController {
     
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponseDto>> getCurrentUser(@AuthenticationPrincipal User user) {
+        // Check if user is authenticated
+        if (user == null) {
+            logger.warn("⚠️ GET /api/auth/me - User not authenticated or token expired");
+            return new ResponseEntity<>(
+                ApiResponse.error("User not authenticated or token expired"), 
+                HttpStatus.UNAUTHORIZED
+            );
+        }
+        
+        logger.info("✅ GET /api/auth/me - User: {} (ID: {})", user.getEmail(), user.getId());
         UserResponseDto userResponse = new UserResponseDto(user);
         return ResponseEntity.ok(ApiResponse.success("Current user retrieved successfully", userResponse));
     }
