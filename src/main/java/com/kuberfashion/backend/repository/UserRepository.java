@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE (:role IS NULL OR u.role = :role) " +
             "AND (:enabled IS NULL OR u.enabled = :enabled) " +
-            "AND (:q IS NULL OR (LOWER(u.email) LIKE LOWER(CONCAT('%', :q, '%')) " +
+            "AND (:q IS NULL OR (LOWER(CAST(u.email AS string)) LIKE LOWER(CONCAT('%', :q, '%')) " +
             "OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :q, '%')) " +
             "OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :q, '%'))))" )
     Page<User> findAllFiltered(@Param("role") User.Role role,

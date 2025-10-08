@@ -1,6 +1,7 @@
 package com.kuberfashion.backend.exception;
 
 import com.kuberfashion.backend.dto.ApiResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,8 +61,39 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
     
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String message = "Database constraint violation";
+        
+        // Check for specific constraint violations
+        if (ex.getCause() instanceof ConstraintViolationException) {
+            ConstraintViolationException cve = (ConstraintViolationException) ex.getCause();
+            String constraintName = cve.getConstraintName();
+            
+            if (constraintName != null) {
+                if (constraintName.toLowerCase().contains("slug")) {
+                    message = "A product with this slug already exists. Please use a different slug.";
+                } else if (constraintName.toLowerCase().contains("unique")) {
+                    message = "This value already exists. Please use a unique value.";
+                }
+            }
+        } else if (ex.getMessage() != null) {
+            if (ex.getMessage().toLowerCase().contains("slug")) {
+                message = "A product with this slug already exists. Please use a different slug.";
+            } else if (ex.getMessage().toLowerCase().contains("duplicate")) {
+                message = "Duplicate entry detected. Please ensure all values are unique.";
+            }
+        }
+        
+        ApiResponse<Object> response = ApiResponse.error(message);
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+    
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGenericException(Exception ex) {
+        // Log the full exception for debugging
+        ex.printStackTrace();
+        
         ApiResponse<Object> response = ApiResponse.error("An unexpected error occurred: " + ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -129,11 +129,36 @@ public class ProductService {
     // Admin methods
     @Transactional
     public Product createProduct(Product product) {
+        // Ensure unique slug
+        String baseSlug = product.getSlug();
+        String uniqueSlug = baseSlug;
+        int counter = 1;
+        
+        while (productRepository.existsBySlug(uniqueSlug)) {
+            uniqueSlug = baseSlug + "-" + counter;
+            counter++;
+        }
+        
+        product.setSlug(uniqueSlug);
         return productRepository.save(product);
     }
     
     @Transactional
     public Product updateProduct(Product product) {
+        // Check if slug changed and ensure uniqueness
+        Product existingProduct = productRepository.findById(product.getId()).orElse(null);
+        if (existingProduct != null && !existingProduct.getSlug().equals(product.getSlug())) {
+            String baseSlug = product.getSlug();
+            String uniqueSlug = baseSlug;
+            int counter = 1;
+            
+            while (productRepository.existsBySlug(uniqueSlug) && !uniqueSlug.equals(existingProduct.getSlug())) {
+                uniqueSlug = baseSlug + "-" + counter;
+                counter++;
+            }
+            
+            product.setSlug(uniqueSlug);
+        }
         return productRepository.save(product);
     }
     

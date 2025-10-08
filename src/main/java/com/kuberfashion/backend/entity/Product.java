@@ -50,7 +50,7 @@ public class Product {
     @Column(length = 500)
     private String image;
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_url", length = 500)
     private List<String> images;
@@ -65,12 +65,12 @@ public class Product {
     @Column(length = 1000)
     private String description;
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_sizes", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "size", length = 10)
     private List<String> sizes;
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_colors", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "color", length = 50)
     private List<String> colors;

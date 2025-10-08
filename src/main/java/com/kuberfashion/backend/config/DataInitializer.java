@@ -6,17 +6,29 @@ import com.kuberfashion.backend.entity.Category;
 import com.kuberfashion.backend.repository.UserRepository;
 import com.kuberfashion.backend.repository.ProductRepository;
 import com.kuberfashion.backend.repository.CategoryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Initializes essential data for the application.
+ * Runs after StartupValidator to ensure database connectivity.
+ */
 @Component
+@Order(2) // Run after StartupValidator
 public class DataInitializer implements CommandLineRunner {
+
+    private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -30,96 +42,175 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
+
+    @Value("${SKIP_DATA_INITIALIZATION:false}")
+    private boolean skipDataInitialization;
+
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
-        // CRITICAL: Create admin user FIRST before anything else
-        initializeAdminUser();
-        
-        // Create test user if it doesn't exist
-        if (!userRepository.existsByEmail("test@kuberfashion.com")) {
-            User testUser = new User();
-            testUser.setFirstName("Test");
-            testUser.setLastName("User");
-            testUser.setEmail("test@kuberfashion.com");
-            testUser.setPhone("9876543210");
-            testUser.setPassword(passwordEncoder.encode("test123"));
-            testUser.setRole(User.Role.USER);
-            testUser.setEnabled(true);
-            
-            userRepository.save(testUser);
-            System.out.println("✅ Test user created: test@kuberfashion.com / test123");
+        logger.info("🚀 Starting data initialization...");
+        logger.info("📋 Active profile: {}", activeProfile);
+
+        if (skipDataInitialization) {
+            logger.info("⏭️  Data initialization skipped (SKIP_DATA_INITIALIZATION=true)");
+            return;
         }
 
-        // Initialize categories
-        initializeCategories();
-        
-        // Initialize sample products
-        initializeSampleProducts();
+        try {
+            // CRITICAL: Create admin user FIRST before anything else
+            initializeAdminUser();
+            
+            // Create test user only in development
+            if ("dev".equals(activeProfile)) {
+                initializeTestUser();
+            }
+
+            // Initialize categories (essential for the application)
+            initializeCategories();
+            
+            // Initialize sample products only if database is empty
+            initializeSampleProducts();
+
+            logger.info("✅ Data initialization completed successfully!");
+            
+        } catch (Exception e) {
+            logger.error("❌ Data initialization failed: {}", e.getMessage(), e);
+            
+            // In production, we might want to continue without sample data
+            if ("prod".equals(activeProfile)) {
+                logger.warn("⚠️  Continuing startup despite data initialization failure in production mode");
+            } else {
+                throw new RuntimeException("Data initialization failed", e);
+            }
+        }
+    }
+
+    private void initializeTestUser() {
+        try {
+            if (!userRepository.existsByEmail("test@kuberfashion.com")) {
+                User testUser = new User();
+                testUser.setFirstName("Test");
+                testUser.setLastName("User");
+                testUser.setEmail("test@kuberfashion.com");
+                testUser.setPhone("9876543210");
+                testUser.setPassword(passwordEncoder.encode("test123"));
+                testUser.setRole(User.Role.USER);
+                testUser.setEnabled(true);
+                
+                userRepository.save(testUser);
+                logger.info("✅ Test user created: test@kuberfashion.com / test123");
+            } else {
+                logger.info("ℹ️  Test user already exists");
+            }
+        } catch (Exception e) {
+            logger.error("❌ Failed to create test user: {}", e.getMessage());
+            throw e;
+        }
     }
     
     private void initializeAdminUser() {
-        // Check if admin exists
-        if (!userRepository.existsByEmail("admin@kuberfashion.com")) {
-            User admin = new User();
-            admin.setFirstName("Admin");
-            admin.setLastName("User");
-            admin.setEmail("admin@kuberfashion.com");
-            admin.setPhone("1234567890");
-            admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setRole(User.Role.ADMIN);
-            admin.setEnabled(true);
-            
-            userRepository.save(admin);
-            System.out.println("✅ Admin user created successfully!");
-            System.out.println("   Email: admin@kuberfashion.com");
-            System.out.println("   Password: admin123");
-        } else {
-            System.out.println("✅ Admin user already exists");
+        try {
+            // Check if admin exists
+            if (!userRepository.existsByEmail("admin@kuberfashion.com")) {
+                User admin = new User();
+                admin.setFirstName("Admin");
+                admin.setLastName("User");
+                admin.setEmail("admin@kuberfashion.com");
+                admin.setPhone("1234567890");
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setRole(User.Role.ADMIN);
+                admin.setEnabled(true);
+                
+                userRepository.save(admin);
+                logger.info("✅ Admin user created successfully!");
+                logger.info("   📧 Email: admin@kuberfashion.com");
+                logger.info("   🔑 Password: admin123");
+                
+                if ("prod".equals(activeProfile)) {
+                    logger.warn("⚠️  SECURITY WARNING: Default admin credentials are being used in production!");
+                    logger.warn("   Please change the admin password immediately after first login.");
+                }
+            } else {
+                logger.info("✅ Admin user already exists");
+            }
+        } catch (Exception e) {
+            logger.error("❌ CRITICAL: Failed to create admin user: {}", e.getMessage());
+            throw new RuntimeException("Admin user creation failed - this is critical for application functionality", e);
         }
     }
 
     private void initializeCategories() {
-        String[] categoryData = {
-            "mens-fashion,Men's Fashion",
-            "womens-fashion,Women's Fashion", 
-            "kids-fashion,Kids Fashion",
-            "footwear,Footwear",
-            "accessories,Accessories",
-            "sports-active,Sports & Active"
-        };
-
-        for (String data : categoryData) {
-            String[] parts = data.split(",");
-            String slug = parts[0];
-            String name = parts[1];
+        try {
+            logger.info("📂 Initializing categories...");
             
-            if (!categoryRepository.existsBySlug(slug)) {
-                Category category = new Category();
-                category.setSlug(slug);
-                category.setName(name);
-                category.setDescription("Premium " + name.toLowerCase() + " collection");
-                category.setActive(true);
-                categoryRepository.save(category);
-                System.out.println("Category created: " + name);
+            String[] categoryData = {
+                "mens-fashion,Men's Fashion",
+                "womens-fashion,Women's Fashion", 
+                "kids-fashion,Kids Fashion",
+                "footwear,Footwear",
+                "accessories,Accessories",
+                "sports-active,Sports & Active"
+            };
+
+            int createdCount = 0;
+            for (String data : categoryData) {
+                String[] parts = data.split(",");
+                String slug = parts[0];
+                String name = parts[1];
+                
+                if (!categoryRepository.existsBySlug(slug)) {
+                    Category category = new Category();
+                    category.setSlug(slug);
+                    category.setName(name);
+                    category.setDescription("Premium " + name.toLowerCase() + " collection");
+                    category.setActive(true);
+                    categoryRepository.save(category);
+                    logger.info("✅ Category created: {}", name);
+                    createdCount++;
+                } else {
+                    logger.debug("ℹ️  Category already exists: {}", name);
+                }
             }
+            
+            if (createdCount > 0) {
+                logger.info("✅ Created {} new categories", createdCount);
+            } else {
+                logger.info("ℹ️  All categories already exist");
+            }
+            
+        } catch (Exception e) {
+            logger.error("❌ Failed to initialize categories: {}", e.getMessage());
+            throw new RuntimeException("Category initialization failed", e);
         }
     }
 
     private void initializeSampleProducts() {
         try {
-            if (productRepository.count() > 0) {
-                System.out.println("Products already exist, skipping initialization");
-                return; // Products already exist
+            long productCount = productRepository.count();
+            if (productCount > 0) {
+                logger.info("ℹ️  Products already exist ({} products), skipping sample data initialization", productCount);
+                return;
             }
 
-            System.out.println("Initializing sample products...");
+            // Only create sample products in development mode or if explicitly requested
+            if ("prod".equals(activeProfile)) {
+                logger.info("ℹ️  Skipping sample product creation in production mode");
+                return;
+            }
+
+            logger.info("🛍️  Initializing sample products...");
 
             Category mensCategory = categoryRepository.findBySlug("mens-fashion").orElse(null);
             Category womensCategory = categoryRepository.findBySlug("womens-fashion").orElse(null);
             Category footwearCategory = categoryRepository.findBySlug("footwear").orElse(null);
 
             if (mensCategory == null || womensCategory == null || footwearCategory == null) {
-                System.err.println("ERROR: Categories not found! Cannot create products.");
+                logger.error("❌ ERROR: Required categories not found! Cannot create sample products.");
+                logger.error("   Missing categories - mens: {}, womens: {}, footwear: {}", 
+                    mensCategory == null, womensCategory == null, footwearCategory == null);
                 return;
             }
 
@@ -174,10 +265,16 @@ public class DataInitializer implements CommandLineRunner {
                 true, true, 40);
         }
 
-            System.out.println("Sample products created successfully!");
+            logger.info("✅ Sample products created successfully!");
         } catch (Exception e) {
-            System.err.println("ERROR initializing sample products: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("❌ ERROR initializing sample products: {}", e.getMessage(), e);
+            
+            // Don't fail startup for sample product creation issues
+            if ("prod".equals(activeProfile)) {
+                logger.warn("⚠️  Sample product creation failed in production - continuing startup");
+            } else {
+                throw new RuntimeException("Sample product initialization failed", e);
+            }
         }
     }
 
