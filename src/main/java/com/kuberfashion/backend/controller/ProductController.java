@@ -98,11 +98,20 @@ public class ProductController {
     
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<Page<ProductResponseDto>>> searchProducts(
-            @RequestParam String keyword,
+            @RequestParam(value = "q", required = false) String query,
+            @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
         
-        Page<ProductResponseDto> products = productService.searchProducts(keyword, page, size);
+        // Use 'q' parameter if provided, otherwise fall back to 'keyword'
+        String searchTerm = query != null ? query : keyword;
+        
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                .body(ApiResponse.error("Search term is required"));
+        }
+        
+        Page<ProductResponseDto> products = productService.searchProducts(searchTerm, page, size);
         return ResponseEntity.ok(ApiResponse.success("Search results retrieved successfully", products));
     }
     

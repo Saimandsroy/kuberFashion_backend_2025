@@ -4,19 +4,29 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+import java.lang.annotation.*;
 
+@UserRegistrationDto.PasswordMatches
 public class UserRegistrationDto {
     
     @NotBlank(message = "First name is required")
     @Size(max = 50, message = "First name must not exceed 50 characters")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "First name can only contain letters and spaces")
     private String firstName;
     
     @NotBlank(message = "Last name is required")
     @Size(max = 50, message = "Last name must not exceed 50 characters")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Last name can only contain letters and spaces")
     private String lastName;
     
     @NotBlank(message = "Email is required")
+    @Size(max = 100, message = "Email must not exceed 100 characters")
     @Email(message = "Please enter a valid email address")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Please enter a valid email address")
     private String email;
     
     @NotBlank(message = "Phone number is required")
@@ -24,11 +34,35 @@ public class UserRegistrationDto {
     private String phone;
     
     @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&].*$", 
+             message = "Password must contain at least 8 characters with uppercase, lowercase, number, and special character")
     private String password;
     
-    @NotBlank(message = "Please confirm your password")
+    @NotBlank(message = "Password confirmation is required")
     private String confirmPassword;
+    
+    // Custom constraint annotation for password matching
+    @Target({ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Constraint(validatedBy = PasswordMatchesValidator.class)
+    @Documented
+    public @interface PasswordMatches {
+        String message() default "Passwords don't match";
+        Class<?>[] groups() default {};
+        Class<? extends Payload>[] payload() default {};
+    }
+    
+    // Validator implementation
+    public static class PasswordMatchesValidator implements ConstraintValidator<PasswordMatches, UserRegistrationDto> {
+        @Override
+        public boolean isValid(UserRegistrationDto dto, ConstraintValidatorContext context) {
+            if (dto == null || dto.password == null || dto.confirmPassword == null) {
+                return true; // Let @NotBlank handle null validation
+            }
+            return dto.password.equals(dto.confirmPassword);
+        }
+    }
     
     // Constructors
     public UserRegistrationDto() {}
@@ -60,4 +94,19 @@ public class UserRegistrationDto {
     
     public String getConfirmPassword() { return confirmPassword; }
     public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
+    
+    // Custom validation method for password matching
+    public boolean isPasswordMatching() {
+        return password != null && password.equals(confirmPassword);
+    }
+    
+    // Method to get validation-friendly email (lowercase)
+    public String getNormalizedEmail() {
+        return email != null ? email.toLowerCase().trim() : null;
+    }
+    
+    // Method to get cleaned phone number
+    public String getCleanedPhone() {
+        return phone != null ? phone.replaceAll("\\D", "") : null;
+    }
 }
