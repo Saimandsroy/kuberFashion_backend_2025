@@ -29,6 +29,9 @@ public class UserService implements UserDetailsService {
     @Lazy
     private PasswordEncoder passwordEncoder;
     
+    @Autowired
+    private ReferralService referralService;
+    
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findActiveUserByEmail(email)
@@ -61,6 +64,14 @@ public class UserService implements UserDetailsService {
         user.setEnabled(true);
         
         User savedUser = userRepository.save(user);
+        
+        // Referral handling (optional referral code/phone)
+        try {
+            referralService.handlePostRegistration(savedUser, registrationDto.getCleanedReferralCode());
+        } catch (Exception ex) {
+            // do not block registration on referral errors
+            System.err.println("[Referral] Post-registration handling failed: " + ex.getMessage());
+        }
         return new UserResponseDto(savedUser);
     }
     
@@ -88,6 +99,13 @@ public class UserService implements UserDetailsService {
         user.setEnabled(true);
         
         User savedUser = userRepository.save(user);
+        
+        // No referral phone provided in sync flow, but keep hook if present
+        try {
+            referralService.handlePostRegistration(savedUser, registrationDto.getCleanedReferralCode());
+        } catch (Exception ex) {
+            System.err.println("[Referral] Post-registration handling failed (supabase): " + ex.getMessage());
+        }
         return new UserResponseDto(savedUser);
     }
     

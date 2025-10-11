@@ -35,12 +35,18 @@ public class UserRegistrationDto {
     
     @NotBlank(message = "Password is required")
     @Size(min = 8, max = 128, message = "Password must be between 8 and 128 characters")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&].*$", 
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", 
              message = "Password must contain at least 8 characters with uppercase, lowercase, number, and special character")
     private String password;
     
     @NotBlank(message = "Password confirmation is required")
     private String confirmPassword;
+    
+    // Optional referral code (phone number of referring user)
+    private String referralCode; // optional
+
+    // Optional: accumulated referral earnings (for compatibility)
+    private Integer totalReferralCoins; // optional, not used during registration processing
     
     // Custom constraint annotation for password matching
     @Target({ElementType.TYPE})
@@ -95,6 +101,12 @@ public class UserRegistrationDto {
     public String getConfirmPassword() { return confirmPassword; }
     public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
     
+    public String getReferralCode() { return referralCode; }
+    public void setReferralCode(String referralCode) { this.referralCode = referralCode; }
+
+    public Integer getTotalReferralCoins() { return totalReferralCoins; }
+    public void setTotalReferralCoins(Integer totalReferralCoins) { this.totalReferralCoins = totalReferralCoins; }
+    
     // Custom validation method for password matching
     public boolean isPasswordMatching() {
         return password != null && password.equals(confirmPassword);
@@ -108,5 +120,10 @@ public class UserRegistrationDto {
     // Method to get cleaned phone number
     public String getCleanedPhone() {
         return phone != null ? phone.replaceAll("\\D", "") : null;
+    }
+
+    // Clean referral code to digits only
+    public String getCleanedReferralCode() {
+        return referralCode != null ? referralCode.replaceAll("\\D", "") : null;
     }
 }
