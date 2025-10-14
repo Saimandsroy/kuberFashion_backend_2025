@@ -1,0 +1,98 @@
+package com.kuberfashion.backend.config;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Retryable;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+@Configuration
+@EnableRetry
+public class DatabaseConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseConfig.class);
+
+    @Value("${spring.datasource.url}")
+    private String databaseUrl;
+
+    @Value("${spring.datasource.username}")
+    private String databaseUsername;
+
+    @Value("${spring.datasource.password}")
+    private String databasePassword;
+
+    @Bean
+    @Primary
+    @Profile("prod")
+    @ConditionalOnProperty(name = "spring.profiles.active", havingValue = "prod")
+    public DataSource productionDataSource() {
+        logger.info("🔧 Configuring production PostgreSQL DataSource");
+        
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(databaseUrl);
+        config.setUsername(databaseUsername);
+        config.setPassword(databasePassword);
+        config.setDriverClassName("org.postgresql.Driver");
+        
+        // Connection pool settings optimized for Supabase
+        config.setMaximumPoolSize(8);
+        config.setMinimumIdle(2);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(300000);
+        config.setMaxLifetime(1200000);
+        config.setLeakDetectionThreshold(60000);
+        config.setValidationTimeout(5000);
+        
+        // Connection validation
+        config.setConnectionTestQuery("SELECT 1");
+        config.setConnectionInitSql("SELECT 1");
+        
+        // Retry and recovery
+        config.setInitializationFailTimeout(30000);
+        config.setKeepaliveTime(30000);
+        
+        // Pool name for monitoring
+        config.setPoolName("KuberFashionPool");
+        
+        HikariDataSource dataSource = new HikariDataSource(config);
+        
+        // Test connection on startup
+        try {
+            testConnection(dataSource);
+            logger.info("✅ Production database connection established successfully");
+        } catch (Exception e) {
+            logger.error("❌ Failed to establish production database connection: {}", e.getMessage());
+            throw new RuntimeException("Database connection failed", e);
+        }
+        
+        return dataSource;
+    }
+
+    @Retryable(
+        value = {SQLException.class},
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 2000, multiplier = 2)
+    )
+    private void testConnection(DataSource dataSource) throws SQLException {
+        logger.info("🔍 Testing database connection...");
+        try (Connection connection = dataSource.getConnection()) {
+            if (connection.isValid(5)) {
+                logger.info("✅ Database connection is valid");
+            } else {
+                throw new SQLException("Connection validation failed");
+            }
+        }
+    }
+}

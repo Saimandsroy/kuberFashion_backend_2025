@@ -79,6 +79,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Public API endpoints
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/api/admin/auth/login").permitAll()
                 .requestMatchers("/api/test/**").permitAll()
                 .requestMatchers("/api/products/**").permitAll()
@@ -106,8 +107,9 @@ public class SecurityConfig {
         configuration.setAllowedOriginPatterns(Arrays.asList(
             "http://localhost:*", 
             "http://127.0.0.1:*",
-            "http://localhost:5173",
-            "http://localhost:3000"
+            "http://10.*.*.*:*",
+            "http://172.*.*.*:*",
+            "http://192.*.*.*:*"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));

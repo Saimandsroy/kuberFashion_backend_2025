@@ -1,0 +1,37 @@
+KUBER COUPONS COLUMN FIX - INSTRUCTIONS
+=======================================
+
+PROBLEM: Column "kuber_coupons" does not exist in users table
+
+IMMEDIATE SOLUTION:
+1. Go to Supabase Dashboard: https://supabase.com/dashboard
+2. Select project: hanmurmflpqbfwwvqnsl
+3. Go to SQL Editor
+4. Execute this command:
+
+   ALTER TABLE users ADD COLUMN kuber_coupons INTEGER DEFAULT 0 NOT NULL;
+
+5. Verify with:
+   SELECT column_name, data_type, column_default 
+   FROM information_schema.columns 
+   WHERE table_name = 'users' AND column_name = 'kuber_coupons';
+
+ALTERNATIVE (Command Line):
+psql "postgresql://postgres.hanmurmflpqbfwwvqnsl:saimandsroy2005@aws-0-ap-south-1.pooler.supabase.com:5432/postgres?sslmode=require"
+
+Then run: ALTER TABLE users ADD COLUMN kuber_coupons INTEGER DEFAULT 0 NOT NULL;
+
+AFTER APPLYING FIX:
+1. Restart backend (Ctrl+C then mvn spring-boot:run)
+2. Test user registration/login
+3. No more "column does not exist" errors
+
+FILES CREATED:
+- V1__initial_schema.sql (baseline migration)
+- V2__add_kuber_coupons_column.sql (adds missing column)
+- fix-database-schema.sql (manual fix commands)
+
+FLYWAY MIGRATION ADDED:
+- Added flyway dependencies to pom.xml
+- Configured flyway in application-prod.properties
+- Future schema changes will use migrations

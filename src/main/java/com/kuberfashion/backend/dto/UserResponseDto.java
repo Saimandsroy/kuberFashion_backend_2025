@@ -15,6 +15,7 @@ public class UserResponseDto {
     private boolean enabled;
     private LocalDateTime createdAt;
     private LocalDateTime lastActivity;
+    private Integer kuberCoupons;
     
     // Constructors
     public UserResponseDto() {}
@@ -29,6 +30,7 @@ public class UserResponseDto {
         this.enabled = user.isEnabled();
         this.createdAt = user.getCreatedAt();
         this.lastActivity = user.getLastActivity();
+        this.kuberCoupons = user.getKuberCoupons();
     }
     
     // Getters and Setters
@@ -58,6 +60,8 @@ public class UserResponseDto {
     
     public LocalDateTime getLastActivity() { return lastActivity; }
     public void setLastActivity(LocalDateTime lastActivity) { this.lastActivity = lastActivity; }
+    public Integer getKuberCoupons() { return kuberCoupons; }
+    public void setKuberCoupons(Integer kuberCoupons) { this.kuberCoupons = kuberCoupons; }
     
     // Helper methods
     public String getFullName() {

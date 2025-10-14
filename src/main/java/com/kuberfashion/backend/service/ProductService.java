@@ -4,7 +4,11 @@ import com.kuberfashion.backend.dto.ProductResponseDto;
 import com.kuberfashion.backend.entity.Product;
 import com.kuberfashion.backend.exception.ResourceNotFoundException;
 import com.kuberfashion.backend.repository.ProductRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,24 +25,29 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ProductService {
     
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
+    
     @Autowired
     private ProductRepository productRepository;
     
+    @Cacheable(value = "products_list", key = "'all'")
     public List<ProductResponseDto> getAllProducts() {
         try {
+            logger.info("Cache MISS - Fetching all products from database");
             List<Product> products = productRepository.findByActiveTrue();
-            System.out.println("Found " + products.size() + " active products");
+            logger.info("Found {} active products from database", products.size());
             return products.stream()
                     .map(ProductResponseDto::new)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            System.err.println("Error fetching all products: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error fetching all products: {}", e.getMessage(), e);
             return new ArrayList<>();
         }
     }
     
+    @Cacheable(value = "products", key = "#id")
     public ProductResponseDto getProductById(Long id) {
+        logger.info("Cache MISS - Fetching product with id {} from database", id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         return new ProductResponseDto(product);
@@ -50,6 +59,7 @@ public class ProductService {
         return new ProductResponseDto(product);
     }
     
+    @Cacheable(value = "products_list", key = "'featured'")
     public List<ProductResponseDto> getFeaturedProducts() {
         return productRepository.findByFeaturedTrueAndActiveTrue()
                 .stream()
@@ -57,6 +67,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
     
+    @Cacheable(value = "products_list", key = "'cat:' + #categorySlug")
     public List<ProductResponseDto> getProductsByCategory(String categorySlug) {
         return productRepository.findByCategorySlugAndActiveTrue(categorySlug)
                 .stream()
@@ -64,6 +75,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
     
+    @Cacheable(value = "products_list", key = "'cat:' + #categorySlug + ':p:' + #page + ':s:' + #size + ':sort:' + #sortBy + ':' + #sortDir")
     public Page<ProductResponseDto> getProductsByCategoryPaginated(String categorySlug, int page, int size, String sortBy, String sortDir) {
         Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, getSortField(sortBy)));
@@ -72,24 +84,28 @@ public class ProductService {
         return products.map(ProductResponseDto::new);
     }
     
+    @Cacheable(value = "products_list", key = "'search:' + #keyword + ':p:' + #page + ':s:' + #size")
     public Page<ProductResponseDto> searchProducts(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> products = productRepository.searchProducts(keyword, pageable);
         return products.map(ProductResponseDto::new);
     }
     
+    @Cacheable(value = "products_list", key = "'price:' + #minPrice + ':' + #maxPrice + ':p:' + #page + ':s:' + #size")
     public Page<ProductResponseDto> getProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> products = productRepository.findByPriceRange(minPrice, maxPrice, pageable);
         return products.map(ProductResponseDto::new);
     }
     
+    @Cacheable(value = "products_list", key = "'cat:' + #categorySlug + ':price:' + #minPrice + ':' + #maxPrice + ':p:' + #page + ':s:' + #size")
     public Page<ProductResponseDto> getProductsByCategoryAndPriceRange(String categorySlug, BigDecimal minPrice, BigDecimal maxPrice, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> products = productRepository.findByCategoryAndPriceRange(categorySlug, minPrice, maxPrice, pageable);
         return products.map(ProductResponseDto::new);
     }
     
+    @Cacheable(value = "products_list", key = "'top:' + #limit")
     public List<ProductResponseDto> getTopRatedProducts(int limit) {
         Pageable pageable = PageRequest.of(0, limit);
         return productRepository.findTopRatedProducts(pageable)
@@ -98,6 +114,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
     
+    @Cacheable(value = "products_list", key = "'new:' + #limit")
     public List<ProductResponseDto> getNewestProducts(int limit) {
         Pageable pageable = PageRequest.of(0, limit);
         return productRepository.findNewestProducts(pageable)
@@ -106,11 +123,13 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
     
+    @Cacheable(value = "products_list", key = "'trending'")
     public List<ProductResponseDto> getTrendingProducts() {
         // For now, return top rated products as trending
         return getTopRatedProducts(10);
     }
     
+    @Cacheable(value = "products_list", key = "'available'")
     public List<ProductResponseDto> getAvailableProducts() {
         return productRepository.findAvailableProducts()
                 .stream()
@@ -128,6 +147,7 @@ public class ProductService {
     
     // Admin methods
     @Transactional
+    @CacheEvict(value = {"products_list"}, allEntries = true)
     public Product createProduct(Product product) {
         // Ensure unique slug
         String baseSlug = product.getSlug();
@@ -144,6 +164,7 @@ public class ProductService {
     }
     
     @Transactional
+    @CacheEvict(value = {"products", "products_list"}, key = "#product.id", allEntries = true)
     public Product updateProduct(Product product) {
         // Check if slug changed and ensure uniqueness
         Product existingProduct = productRepository.findById(product.getId()).orElse(null);
@@ -163,6 +184,7 @@ public class ProductService {
     }
     
     @Transactional
+    @CacheEvict(value = {"products", "products_list"}, key = "#id", allEntries = true)
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }

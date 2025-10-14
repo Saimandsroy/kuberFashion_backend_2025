@@ -34,6 +34,7 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider tokenProvider;
     
+    
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<JwtAuthenticationResponse>> authenticateUser(@Valid @RequestBody UserLoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(
@@ -50,6 +51,29 @@ public class AuthController {
         JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwt, userDto);
         
         return ResponseEntity.ok(ApiResponse.success("Login successful", response));
+    }
+    
+    // Phone + Password Login
+    @PostMapping("/phone/login")
+    public ResponseEntity<ApiResponse<JwtAuthenticationResponse>> phoneLogin(@Valid @RequestBody PhoneLoginDto loginDto) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginDto.getPhone(),
+                            loginDto.getPassword()
+                    )
+            );
+            
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = tokenProvider.generateToken(authentication);
+            
+            UserResponseDto userDto = new UserResponseDto((User) authentication.getPrincipal());
+            JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwt, userDto);
+            
+            return ResponseEntity.ok(ApiResponse.success("Login successful", response));
+        } catch (Exception e) {
+            return new ResponseEntity<>(ApiResponse.error("Invalid phone or password"), HttpStatus.UNAUTHORIZED);
+        }
     }
     
     @PostMapping("/register")

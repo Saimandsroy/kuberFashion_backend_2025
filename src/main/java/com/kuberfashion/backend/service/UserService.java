@@ -33,9 +33,18 @@ public class UserService implements UserDetailsService {
     private ReferralService referralService;
     
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findActiveUserByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found or disabled with email: " + email));
+    public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
+        if (identifier == null || identifier.isBlank()) {
+            throw new UsernameNotFoundException("Identifier is required");
+        }
+        // If identifier looks like email, load by email; otherwise treat as phone
+        boolean looksLikeEmail = identifier.contains("@");
+        if (looksLikeEmail) {
+            return userRepository.findActiveUserByEmail(identifier)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found or disabled with email: " + identifier));
+        }
+        return userRepository.findActiveUserByPhone(identifier)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found or disabled with phone: " + identifier));
     }
     
     public UserResponseDto registerUser(UserRegistrationDto registrationDto) {

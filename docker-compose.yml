@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: kuberfashion-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kuberfashion
+      POSTGRES_USER: kuberfashion_user
+      POSTGRES_PASSWORD: KuberFashion@2025!
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - kuberfashion-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kuberfashion_user -d kuberfashion"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: kuberfashion-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@kuberfashion.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "8081:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - kuberfashion-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  kuberfashion-network:
+    driver: bridge

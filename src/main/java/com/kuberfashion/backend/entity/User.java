@@ -33,14 +33,13 @@ public class User implements UserDetails {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
     
-    @NotBlank(message = "Email is required")
     @Email(message = "Please enter a valid email address")
-    @Column(unique = true, nullable = false, length = 100)
+    @Column(unique = true, nullable = true, length = 100)
     private String email;
     
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^\\d{10}$", message = "Please enter a valid 10-digit phone number")
-    @Column(nullable = false, length = 15)
+    @Column(nullable = false, length = 15, unique = true)
     private String phone;
     
     @NotBlank(message = "Password is required")
@@ -55,6 +54,9 @@ public class User implements UserDetails {
     
     @Column(name = "is_enabled", nullable = false)
     private boolean enabled = true;
+    
+    @Version
+    private Long version;
     
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -75,6 +77,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<WishlistItem> wishlistItems;
+    
+    @Column(name = "kuber_coupons", nullable = false)
+    private int kuberCoupons = 0;
     
     public enum Role {
         USER, ADMIN
@@ -110,7 +115,7 @@ public class User implements UserDetails {
     
     @Override
     public String getUsername() {
-        return email;
+        return phone;
     }
     
     @Override
@@ -179,4 +184,9 @@ public class User implements UserDetails {
     public String getFullName() {
         return firstName + " " + lastName;
     }
+    
+    public int getKuberCoupons() { return kuberCoupons; }
+    public void setKuberCoupons(int kuberCoupons) { this.kuberCoupons = kuberCoupons; }
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version; }
 }

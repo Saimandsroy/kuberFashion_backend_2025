@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    environment:
+      POSTGRES_DB: kuberfashion_prod
+      POSTGRES_USER: kuberfashion_prod
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    restart: always
+    networks:
+      - kuberfashion-prod-network
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+
+  pgadmin:
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: 'True'
+    volumes:
+      - pgadmin_prod_data:/var/lib/pgadmin
+    restart: always
+    networks:
+      - kuberfashion-prod-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.yourdomain.com`)"
+      - "traefik.http.routers.pgadmin.tls.certresolver=letsencrypt"
+
+  # Backup service
+  postgres-backup:
+    image: postgres:15-alpine
+    container_name: kuberfashion-backup
+    restart: "no"
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - ./backup-scripts:/scripts
+    networks:
+      - kuberfashion-prod-network
+    depends_on:
+      - postgres
+    command: >
+      sh -c "
+      while true; do
+        pg_dump -h postgres -U kuberfashion_prod -d kuberfashion_prod > /backups/backup_$$(date +%Y%m%d_%H%M%S).sql
+        find /backups -name '*.sql' -mtime +7 -delete
+        sleep 86400
+      done
+      "
+
+volumes:
+  postgres_prod_data:
+    driver: local
+  pgadmin_prod_data:
+    driver: local
+
+networks:
+  kuberfashion-prod-network:
+    driver: bridge
