@@ -3,11 +3,10 @@ package com.kuberfashion.backend.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@Deprecated
 public class SupabaseStorageService {
 
     @Value("${supabase.url}")
@@ -16,7 +15,7 @@ public class SupabaseStorageService {
     @Value("${supabase.storage.bucket}")
     private String bucket;
 
-    @Value("${SUPABASE_SERVICE_KEY:}")
+    @Value("${supabase.service.key:}")
     private String serviceKey;
 
     public String uploadPublic(String categorySlug, String filename, byte[] bytes, String contentType) {

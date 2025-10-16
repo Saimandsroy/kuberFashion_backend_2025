@@ -1,7 +1,7 @@
 package com.kuberfashion.backend.controller;
 
 import com.kuberfashion.backend.dto.ApiResponse;
-import com.kuberfashion.backend.service.SupabaseStorageService;
+import com.kuberfashion.backend.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,18 +9,17 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/admin/storage")
-@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "https://kuberfashions.in", "https://www.kuberfashions.in"})
 public class AdminStorageController {
 
     @Autowired
-    private SupabaseStorageService storageService;
+    private FileStorageService fileStorageService;
 
     @PostMapping("/upload")
     @PreAuthorize("hasRole('ADMIN')")
@@ -52,13 +51,8 @@ public class AdminStorageController {
                 filename = UUID.randomUUID().toString() + extension;
             }
 
-            // Upload to Supabase
-            String publicUrl = storageService.uploadPublic(
-                categorySlug,
-                filename,
-                file.getBytes(),
-                contentType
-            );
+            // Upload to Cloudflare R2
+            String publicUrl = fileStorageService.uploadFile(file, categorySlug);
 
             // Return response
             Map<String, String> data = new HashMap<>();
@@ -68,9 +62,6 @@ public class AdminStorageController {
 
             return ResponseEntity.ok(ApiResponse.success("Image uploaded successfully", data));
 
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("Failed to read file: " + e.getMessage()));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error("Storage configuration error: " + e.getMessage()));
@@ -94,22 +85,11 @@ public class AdminStorageController {
 
             java.util.List<String> urls = new java.util.ArrayList<>();
             
-            for (MultipartFile file : files) {
-                if (!file.isEmpty()) {
-                    String contentType = file.getContentType();
+            for (MultipartFile f : files) {
+                if (!f.isEmpty()) {
+                    String contentType = f.getContentType();
                     if (contentType != null && contentType.startsWith("image/")) {
-                        String originalFilename = file.getOriginalFilename();
-                        String extension = originalFilename != null && originalFilename.contains(".") 
-                            ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                            : ".jpg";
-                        String filename = UUID.randomUUID().toString() + extension;
-
-                        String publicUrl = storageService.uploadPublic(
-                            categorySlug,
-                            filename,
-                            file.getBytes(),
-                            contentType
-                        );
+                        String publicUrl = fileStorageService.uploadFile(f, categorySlug);
                         urls.add(publicUrl);
                     }
                 }

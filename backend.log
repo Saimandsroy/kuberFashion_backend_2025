@@ -1,0 +1,194 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< com.kuberfashion:backend >----------------------
+[INFO] Building KuberFashion 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.5.5:run (default-cli) > test-compile @ backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ backend ---
+[INFO] Copying 3 resources from src/main/resources to target/classes
+[INFO] Copying 4 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.0:compile (default-compile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ backend ---
+[INFO] skip non existing resourceDirectory /Users/saimandsroy/Coding/kuberFashion_backend_2025/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.14.0:testCompile (default-testCompile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:3.5.5:run (default-cli) < test-compile @ backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.5.5:run (default-cli) @ backend ---
+[INFO] Attaching agents: []
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.5)
+
+2025-10-16 08:10:49.551 INFO  [restartedMain] c.k.backend.KuberFashionApplication - Starting KuberFashionApplication using Java 21.0.8 with PID 75232 (/Users/saimandsroy/Coding/kuberFashion_backend_2025/target/classes started by saimandsroy in /Users/saimandsroy/Coding/kuberFashion_backend_2025)
+2025-10-16 08:10:49.552 INFO  [restartedMain] c.k.backend.KuberFashionApplication - The following 1 profile is active: "prod"
+2025-10-16 08:10:49.564 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-10-16 08:10:49.564 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-10-16 08:10:49.844 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-10-16 08:10:49.844 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-16 08:10:49.897 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 50 ms. Found 10 JPA repository interfaces.
+2025-10-16 08:10:49.902 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-10-16 08:10:49.903 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-10-16 08:10:49.907 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.kuberfashion.backend.repository.CartItemRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-16 08:10:49.907 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.kuberfashion.backend.repository.CategoryRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-16 08:10:49.908 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.kuberfashion.backend.repository.CoinBalanceRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-16 08:10:49.908 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.kuberfashion.backend.repository.CoinTransactionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-16 08:10:49.908 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.kuberfashion.backend.repository.CouponTransactionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-16 08:10:49.908 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.kuberfashion.backend.repository.OrderRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-16 08:10:49.908 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.kuberfashion.backend.repository.ProductRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-16 08:10:49.908 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.kuberfashion.backend.repository.ReferralRelationRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-16 08:10:49.908 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.kuberfashion.backend.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-16 08:10:49.908 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.kuberfashion.backend.repository.WishlistItemRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-16 08:10:49.908 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 3 ms. Found 0 Redis repository interfaces.
+2025-10-16 08:10:50.112 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-10-16 08:10:50.116 INFO  [restartedMain] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-10-16 08:10:50.116 INFO  [restartedMain] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.44]
+2025-10-16 08:10:50.130 INFO  [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-10-16 08:10:50.130 INFO  [restartedMain] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 566 ms
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+2025-10-16 08:10:50.162 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - KuberFashionPool - Starting...
+2025-10-16 08:10:50.229 INFO  [restartedMain] com.zaxxer.hikari.pool.HikariPool - KuberFashionPool - Added connection org.postgresql.jdbc.PgConnection@1ea9208c
+2025-10-16 08:10:50.229 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - KuberFashionPool - Start completed.
+2025-10-16 08:10:50.257 INFO  [restartedMain] o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-16 08:10:50.269 INFO  [restartedMain] org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-10-16 08:10:50.278 INFO  [restartedMain] o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-10-16 08:10:50.346 INFO  [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-16 08:10:50.363 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-16 08:10:50.368 INFO  [restartedMain] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (KuberFashionPool)']
+	Database driver: undefined/unknown
+	Database version: 15.14
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-10-16 08:10:50.719 INFO  [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-16 08:10:50.777 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2025-10-16 08:10:50.777 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - constraint "ukoul14ho7bctbefv8jywp5v3i2" of relation "categories" does not exist, skipping
+2025-10-16 08:10:50.778 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2025-10-16 08:10:50.778 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - constraint "idx_coin_balance_user" of relation "coin_balances" does not exist, skipping
+2025-10-16 08:10:50.784 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2025-10-16 08:10:50.784 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - constraint "uknthkiu7pgmnqnu86i2jyoe2v7" of relation "orders" does not exist, skipping
+2025-10-16 08:10:50.785 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2025-10-16 08:10:50.785 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - constraint "ukostq1ec3toafnjok09y9l7dox" of relation "products" does not exist, skipping
+2025-10-16 08:10:50.787 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2025-10-16 08:10:50.787 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - constraint "idx_ref_user" of relation "referral_relations" does not exist, skipping
+2025-10-16 08:10:50.788 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2025-10-16 08:10:50.788 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - constraint "uk6dotkott2kjsp8vw4d0m25fb7" of relation "users" does not exist, skipping
+2025-10-16 08:10:50.789 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2025-10-16 08:10:50.789 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - constraint "ukdu5v5sr43g5bfnji4vb8hg5s3" of relation "users" does not exist, skipping
+2025-10-16 08:10:50.790 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2025-10-16 08:10:50.790 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - constraint "uke243ydpidwof1vie1aw8cxdea" of relation "users" does not exist, skipping
+2025-10-16 08:10:50.791 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - SQL Warning Code: 0, SQLState: 00000
+2025-10-16 08:10:50.791 WARN  [restartedMain] o.h.e.jdbc.spi.SqlExceptionHelper - constraint "uktp53unkks741xiqi6m620i7mx" of relation "wishlist_items" does not exist, skipping
+2025-10-16 08:10:50.806 INFO  [restartedMain] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-16 08:10:50.908 INFO  [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+Environment variables loaded from .env file
+DATABASE_URL: SET
+DATABASE_USERNAME: SET
+DATABASE_PASSWORD: SET
+2025-10-16 08:10:52.307 WARN  [restartedMain] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+Initializing JWT decoder with JWKS URI: https://hanmurmflpqbfwwvqnsl.supabase.co/auth/v1/keys
+2025-10-16 08:10:53.413 INFO  [restartedMain] o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:postgresql://localhost:5432/kuberfashion?sslmode=disable'
+2025-10-16 08:10:53.438 INFO  [restartedMain] o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-10-16 08:10:53.453 INFO  [restartedMain] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-10-16 08:10:53.458 INFO  [restartedMain] c.k.backend.KuberFashionApplication - Started KuberFashionApplication in 4.02 seconds (process running for 4.144)
+2025-10-16 08:10:53.463 INFO  [restartedMain] c.k.backend.config.DataInitializer - 🚀 Starting data initialization...
+2025-10-16 08:10:53.463 INFO  [restartedMain] c.k.backend.config.DataInitializer - 📋 Active profile: prod
+2025-10-16 08:10:53.581 INFO  [restartedMain] c.k.backend.config.DataInitializer - ✅ Admin user created successfully!
+2025-10-16 08:10:53.581 INFO  [restartedMain] c.k.backend.config.DataInitializer -    📧 Email: admin@kuberfashion.com
+2025-10-16 08:10:53.582 INFO  [restartedMain] c.k.backend.config.DataInitializer -    🔑 Password: admin123
+2025-10-16 08:10:53.582 WARN  [restartedMain] c.k.backend.config.DataInitializer - ⚠️  SECURITY WARNING: Default admin credentials are being used in production!
+2025-10-16 08:10:53.582 WARN  [restartedMain] c.k.backend.config.DataInitializer -    Please change the admin password immediately after first login.
+2025-10-16 08:10:53.582 INFO  [restartedMain] c.k.backend.config.DataInitializer - 📂 Initializing categories...
+2025-10-16 08:10:53.587 INFO  [restartedMain] c.k.backend.config.DataInitializer - ✅ Category created: Men's Fashion
+2025-10-16 08:10:53.590 INFO  [restartedMain] c.k.backend.config.DataInitializer - ✅ Category created: Women's Fashion
+2025-10-16 08:10:53.592 INFO  [restartedMain] c.k.backend.config.DataInitializer - ✅ Category created: Kids Fashion
+2025-10-16 08:10:53.594 INFO  [restartedMain] c.k.backend.config.DataInitializer - ✅ Category created: Footwear
+2025-10-16 08:10:53.597 INFO  [restartedMain] c.k.backend.config.DataInitializer - ✅ Category created: Accessories
+2025-10-16 08:10:53.599 INFO  [restartedMain] c.k.backend.config.DataInitializer - ✅ Category created: Sports & Active
+2025-10-16 08:10:53.599 INFO  [restartedMain] c.k.backend.config.DataInitializer - ✅ Created 6 new categories
+2025-10-16 08:10:53.603 INFO  [restartedMain] c.k.backend.config.DataInitializer - ℹ️  Skipping sample product creation in production mode
+2025-10-16 08:10:53.603 INFO  [restartedMain] c.k.backend.config.DataInitializer - ✅ Data initialization completed successfully!
+2025-10-16 08:10:54.259 INFO  [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-16 08:10:54.261 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter - ═══════════════════════════════════════════════════════════════
+2025-10-16 08:10:54.261 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter - 🔵 INCOMING REQUEST
+2025-10-16 08:10:54.261 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter - Method: GET | URL: http://localhost:8080/api/health
+2025-10-16 08:10:54.261 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter - Query String: null
+2025-10-16 08:10:54.261 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter - Client IP: 0:0:0:0:0:0:0:1
+2025-10-16 08:10:54.261 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter - 📋 Headers:
+2025-10-16 08:10:54.261 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter -   host = localhost:8080
+2025-10-16 08:10:54.261 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter -   user-agent = curl/8.7.1
+2025-10-16 08:10:54.261 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter -   accept = */*
+2025-10-16 08:10:54.288 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter - ───────────────────────────────────────────────────────────────
+2025-10-16 08:10:54.288 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter - ✅ RESPONSE
+2025-10-16 08:10:54.288 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter - Status: 200 | Duration: 27ms
+2025-10-16 08:10:54.288 INFO  [http-nio-8080-exec-1] c.k.b.filter.RequestLoggingFilter - ═══════════════════════════════════════════════════════════════
+2025-10-16 08:10:54.295 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter - ═══════════════════════════════════════════════════════════════
+2025-10-16 08:10:54.295 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter - 🔵 INCOMING REQUEST
+2025-10-16 08:10:54.295 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter - Method: GET | URL: http://localhost:8080/api/health
+2025-10-16 08:10:54.295 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter - Query String: null
+2025-10-16 08:10:54.295 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter - Client IP: 0:0:0:0:0:0:0:1
+2025-10-16 08:10:54.295 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter - 📋 Headers:
+2025-10-16 08:10:54.295 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter -   host = localhost:8080
+2025-10-16 08:10:54.295 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter -   user-agent = curl/8.7.1
+2025-10-16 08:10:54.295 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter -   accept = */*
+2025-10-16 08:10:54.296 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter - ───────────────────────────────────────────────────────────────
+2025-10-16 08:10:54.296 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter - ✅ RESPONSE
+2025-10-16 08:10:54.296 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter - Status: 200 | Duration: 1ms
+2025-10-16 08:10:54.296 INFO  [http-nio-8080-exec-2] c.k.b.filter.RequestLoggingFilter - ═══════════════════════════════════════════════════════════════
+2025-10-16 08:10:54.306 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter - ═══════════════════════════════════════════════════════════════
+2025-10-16 08:10:54.306 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter - 🔵 INCOMING REQUEST
+2025-10-16 08:10:54.306 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter - Method: GET | URL: http://localhost:8080/api/products
+2025-10-16 08:10:54.306 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter - Query String: null
+2025-10-16 08:10:54.306 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter - Client IP: 0:0:0:0:0:0:0:1
+2025-10-16 08:10:54.306 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter - 📋 Headers:
+2025-10-16 08:10:54.306 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter -   host = localhost:8080
+2025-10-16 08:10:54.306 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter -   user-agent = curl/8.7.1
+2025-10-16 08:10:54.306 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter -   accept = */*
+2025-10-16 08:10:54.307 INFO  [http-nio-8080-exec-4] c.k.b.controller.ProductController - 📦 GET /api/products - Fetching all products
+2025-10-16 08:10:54.311 INFO  [http-nio-8080-exec-4] c.k.backend.service.ProductService - Cache MISS - Fetching all products from database
+2025-10-16 08:10:54.338 INFO  [http-nio-8080-exec-4] c.k.backend.service.ProductService - Found 8 active products from database
+2025-10-16 08:10:54.339 INFO  [http-nio-8080-exec-4] c.k.b.controller.ProductController - ✅ Successfully retrieved 8 products
+2025-10-16 08:10:54.353 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter - ───────────────────────────────────────────────────────────────
+2025-10-16 08:10:54.353 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter - ✅ RESPONSE
+2025-10-16 08:10:54.353 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter - Status: 200 | Duration: 47ms
+2025-10-16 08:10:54.353 INFO  [http-nio-8080-exec-4] c.k.b.filter.RequestLoggingFilter - ═══════════════════════════════════════════════════════════════
+2025-10-16 08:10:54.360 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter - ═══════════════════════════════════════════════════════════════
+2025-10-16 08:10:54.360 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter - 🔵 INCOMING REQUEST
+2025-10-16 08:10:54.361 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter - Method: POST | URL: http://localhost:8080/api/auth/login
+2025-10-16 08:10:54.361 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter - Query String: null
+2025-10-16 08:10:54.361 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter - Client IP: 0:0:0:0:0:0:0:1
+2025-10-16 08:10:54.361 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter - 📋 Headers:
+2025-10-16 08:10:54.361 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter -   host = localhost:8080
+2025-10-16 08:10:54.361 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter -   user-agent = curl/8.7.1
+2025-10-16 08:10:54.361 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter -   accept = */*
+2025-10-16 08:10:54.361 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter -   content-type = application/json
+2025-10-16 08:10:54.361 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter -   content-length = 54
+2025-10-16 08:10:54.519 WARN  [http-nio-8080-exec-6] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.security.authentication.BadCredentialsException: Bad credentials]
+2025-10-16 08:10:54.519 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter - ───────────────────────────────────────────────────────────────
+2025-10-16 08:10:54.519 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter - ❌ RESPONSE
+2025-10-16 08:10:54.519 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter - Status: 401 | Duration: 159ms
+2025-10-16 08:10:54.519 INFO  [http-nio-8080-exec-6] c.k.b.filter.RequestLoggingFilter - ═══════════════════════════════════════════════════════════════
+2025-10-16 08:12:16.391 INFO  [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-10-16 08:12:16.396 INFO  [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-10-16 08:12:16.410 INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-10-16 08:12:16.415 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - KuberFashionPool - Shutdown initiated...
+2025-10-16 08:12:16.416 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - KuberFashionPool - Shutdown completed.

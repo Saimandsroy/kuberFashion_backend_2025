@@ -1,7 +1,6 @@
 package com.kuberfashion.backend.controller;
 
 import com.kuberfashion.backend.dto.*;
-import com.kuberfashion.backend.dto.SupabaseUserSyncDto;
 import com.kuberfashion.backend.entity.User;
 import com.kuberfashion.backend.security.JwtTokenProvider;
 import com.kuberfashion.backend.service.UserService;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "https://kuberfashions.in", "https://www.kuberfashions.in"})
 public class AuthController {
     
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -111,27 +110,7 @@ public class AuthController {
         }
     }
     
-    @PostMapping("/sync-user")
-    public ResponseEntity<ApiResponse<UserResponseDto>> syncSupabaseUser(@Valid @RequestBody SupabaseUserSyncDto syncDto) {
-        logger.info("👥 POST /api/auth/sync-user - Syncing Supabase user: {}", syncDto.getEmail());
-        try {
-            // This endpoint is called after Supabase user creation to create corresponding backend user
-            UserRegistrationDto registrationDto = new UserRegistrationDto();
-            registrationDto.setEmail(syncDto.getEmail());
-            registrationDto.setFirstName(syncDto.getFirstName());
-            registrationDto.setLastName(syncDto.getLastName());
-            registrationDto.setPhone(syncDto.getPhone());
-            registrationDto.setPassword("SUPABASE_USER"); // Placeholder password for Supabase users
-            
-            logger.debug("  Creating user with Supabase ID: {}", syncDto.getSupabaseId());
-            UserResponseDto user = userService.registerSupabaseUser(registrationDto, syncDto.getSupabaseId());
-            logger.info("✅ User synced successfully: {} (ID: {})", user.getEmail(), user.getId());
-            return new ResponseEntity<>(ApiResponse.success("User synced successfully", user), HttpStatus.CREATED);
-        } catch (Exception e) {
-            logger.error("❌ Error syncing user: {}", e.getMessage(), e);
-            return new ResponseEntity<>(ApiResponse.error("Failed to sync user: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+    
     
     @PostMapping("/create-admin")
     public ResponseEntity<ApiResponse<String>> createAdminUser(@RequestParam String email) {

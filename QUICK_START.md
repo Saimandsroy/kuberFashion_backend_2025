@@ -82,9 +82,28 @@ cors.allowed-origins=http://localhost:3000,https://yourdomain.com
 
 ## 🧪 TEST EVERYTHING
 
+### 🤖 Automated Test Suite (Recommended)
+
+Run the complete automated test suite:
+
+```bash
+# Bash version (requires curl)
+./test-backend.sh
+
+# Python version (requires Python 3 + requests)
+python3 test-backend.py
+
+# Test production
+./test-backend.sh https://api.kuberfashions.in/api
+```
+
+See **[TESTING.md](./TESTING.md)** for full testing documentation.
+
+### 📋 Manual Tests (Individual Endpoints)
+
 ### Test 1: Health Check
 ```bash
-curl http://localhost:8080/api/test/health
+curl http://localhost:8080/api/health
 ```
 
 ### Test 2: Get Categories
@@ -105,15 +124,16 @@ curl -X POST http://localhost:8080/api/auth/register \
     "firstName": "John",
     "lastName": "Doe", 
     "email": "john@example.com",
-    "phone": "1234567890",
-    "password": "password123"
+    "phone": "+911234567890",
+    "password": "Passw0rd!",
+    "confirmPassword": "Passw0rd!"
   }'
 ```
 
 ### Test 5: Login
 ```bash
 curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
+  -H "Content-Type": "application/json" \
   -d '{
     "email": "test@kuberfashion.com",
     "password": "test123"

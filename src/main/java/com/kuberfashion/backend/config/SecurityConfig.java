@@ -105,6 +105,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList(
+            "https://kuberfashions.in",
+            "https://www.kuberfashions.in",
             "http://localhost:*", 
             "http://127.0.0.1:*",
             "http://10.*.*.*:*",

@@ -7,20 +7,15 @@ import com.kuberfashion.backend.entity.Order;
 import com.kuberfashion.backend.entity.User;
 import com.kuberfashion.backend.repository.OrderRepository;
 import com.kuberfashion.backend.repository.UserRepository;
-import com.kuberfashion.backend.service.SupabaseStorageService;
 import com.kuberfashion.backend.service.UserService;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,7 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "https://kuberfashions.in", "https://www.kuberfashions.in"})
 public class AdminController {
 
     @Autowired
@@ -41,8 +36,7 @@ public class AdminController {
     @Autowired
     private OrderRepository orderRepository;
 
-    @Autowired
-    private SupabaseStorageService storageService;
+    
 
     // Users
     @GetMapping("/users")
@@ -81,17 +75,7 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("Role updated"));
     }
 
-    // Storage uploads (public bucket)
-    @PostMapping(value = "/storage/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Map<String, String>>> upload(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("categorySlug") @NotBlank String categorySlug,
-            @RequestParam("filename") @NotBlank String filename
-    ) throws IOException {
-        String publicUrl = storageService.uploadPublic(categorySlug, filename, file.getBytes(), file.getContentType());
-        return ResponseEntity.ok(ApiResponse.success("Uploaded", Map.of("publicUrl", publicUrl)));
-    }
+    
 
     // Orders listing with simple optional filters
     @GetMapping("/orders")
