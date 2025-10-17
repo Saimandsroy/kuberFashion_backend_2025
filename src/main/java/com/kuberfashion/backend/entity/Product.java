@@ -72,7 +72,7 @@ public class Product {
     
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_colors", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "color", length = 50)
+    @Column(name = "color_name", length = 50)
     private List<String> colors;
     
     @Column(name = "in_stock", nullable = false)

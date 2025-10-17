@@ -46,6 +46,7 @@ public class CacheController {
             } catch (Exception e) {
                 response.put("redis_connection", "FAILED");
                 response.put("error", e.getMessage());
+                
                 return ResponseEntity.status(500).body(response);
             }
         } else {
