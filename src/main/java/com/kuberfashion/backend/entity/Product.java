@@ -84,8 +84,8 @@ public class Product {
     @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity = 0;
 
-    @Column(name = "is_active", nullable = false)
-    private boolean active = true;
+    @Column(name = "is_active", nullable = true, columnDefinition = "boolean default true")
+    private Boolean active = true;
 
     @Column(name = "is_offer", nullable = true, columnDefinition = "boolean default false")
     private Boolean isOffer = false;

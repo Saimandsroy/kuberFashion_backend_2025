@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -17,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
+@ConditionalOnBean(S3Client.class)
 public class FileStorageService {
 
     private static final Logger logger = LoggerFactory.getLogger(FileStorageService.class);
@@ -32,7 +34,8 @@ public class FileStorageService {
 
     /**
      * Upload file to Cloudflare R2
-     * @param file The file to upload
+     * 
+     * @param file   The file to upload
      * @param folder The folder path (e.g., "products", "users", "categories")
      * @return The public URL of the uploaded file
      */
@@ -40,10 +43,10 @@ public class FileStorageService {
         try {
             // Generate unique filename
             String originalFilename = file.getOriginalFilename();
-            String extension = originalFilename != null && originalFilename.contains(".") 
-                ? originalFilename.substring(originalFilename.lastIndexOf(".")) 
-                : "";
-            
+            String extension = originalFilename != null && originalFilename.contains(".")
+                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : "";
+
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             String uniqueId = UUID.randomUUID().toString().substring(0, 8);
             String filename = folder + "/" + timestamp + "_" + uniqueId + extension;
@@ -56,7 +59,7 @@ public class FileStorageService {
                     .contentLength(file.getSize())
                     .build();
 
-            PutObjectResponse response = s3Client.putObject(putObjectRequest, 
+            PutObjectResponse response = s3Client.putObject(putObjectRequest,
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
             logger.info("File uploaded successfully: {} (ETag: {})", filename, response.eTag());
@@ -72,6 +75,7 @@ public class FileStorageService {
 
     /**
      * Delete file from Cloudflare R2
+     * 
      * @param fileUrl The public URL of the file to delete
      */
     public void deleteFile(String fileUrl) {
@@ -94,13 +98,15 @@ public class FileStorageService {
 
     /**
      * Check if file exists in R2
+     * 
      * @param fileUrl The public URL of the file
      * @return true if file exists
      */
     public boolean fileExists(String fileUrl) {
         try {
             String filename = extractFilenameFromUrl(fileUrl);
-            if (filename == null) return false;
+            if (filename == null)
+                return false;
 
             HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
                     .bucket(r2Config.getBucketName())
@@ -119,13 +125,15 @@ public class FileStorageService {
 
     /**
      * Get file metadata
+     * 
      * @param fileUrl The public URL of the file
      * @return File metadata
      */
     public FileMetadata getFileMetadata(String fileUrl) {
         try {
             String filename = extractFilenameFromUrl(fileUrl);
-            if (filename == null) return null;
+            if (filename == null)
+                return null;
 
             HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
                     .bucket(r2Config.getBucketName())
@@ -133,13 +141,12 @@ public class FileStorageService {
                     .build();
 
             HeadObjectResponse response = s3Client.headObject(headObjectRequest);
-            
+
             return new FileMetadata(
                     filename,
                     response.contentType(),
                     response.contentLength(),
-                    response.lastModified()
-            );
+                    response.lastModified());
         } catch (Exception e) {
             logger.error("Error getting file metadata: {}", e.getMessage());
             return null;
@@ -155,8 +162,9 @@ public class FileStorageService {
     }
 
     private String extractFilenameFromUrl(String fileUrl) {
-        if (fileUrl == null || fileUrl.isEmpty()) return null;
-        
+        if (fileUrl == null || fileUrl.isEmpty())
+            return null;
+
         try {
             // Extract filename from URL
             if (fileUrl.contains("/")) {
@@ -167,7 +175,8 @@ public class FileStorageService {
                         // Reconstruct the path from folder onwards
                         StringBuilder path = new StringBuilder();
                         for (int j = i - 1; j < parts.length; j++) {
-                            if (j > i - 1) path.append("/");
+                            if (j > i - 1)
+                                path.append("/");
                             path.append(parts[j]);
                         }
                         return path.toString();
@@ -196,9 +205,20 @@ public class FileStorageService {
         }
 
         // Getters
-        public String getFilename() { return filename; }
-        public String getContentType() { return contentType; }
-        public Long getSize() { return size; }
-        public java.time.Instant getLastModified() { return lastModified; }
+        public String getFilename() {
+            return filename;
+        }
+
+        public String getContentType() {
+            return contentType;
+        }
+
+        public Long getSize() {
+            return size;
+        }
+
+        public java.time.Instant getLastModified() {
+            return lastModified;
+        }
     }
 }

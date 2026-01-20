@@ -5,6 +5,7 @@ import com.kuberfashion.backend.service.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +19,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/files")
-@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "https://kuberfashions.in", "https://www.kuberfashions.in"})
+@CrossOrigin(origins = { "http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000",
+        "https://kuberfashions.in", "https://www.kuberfashions.in" })
+@ConditionalOnBean(FileStorageService.class)
 public class FileUploadController {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUploadController.class);
@@ -28,8 +31,7 @@ public class FileUploadController {
 
     // Allowed file types
     private static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList(
-            "image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"
-    );
+            "image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif");
 
     // Max file size: 5MB
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -41,7 +43,7 @@ public class FileUploadController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadProductImage(
             @RequestParam("file") MultipartFile file) {
-        
+
         return uploadFile(file, "products");
     }
 
@@ -52,7 +54,7 @@ public class FileUploadController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadCategoryImage(
             @RequestParam("file") MultipartFile file) {
-        
+
         return uploadFile(file, "categories");
     }
 
@@ -63,7 +65,7 @@ public class FileUploadController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadUserAvatar(
             @RequestParam("file") MultipartFile file) {
-        
+
         return uploadFile(file, "users");
     }
 
@@ -75,7 +77,7 @@ public class FileUploadController {
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadGeneralImage(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "folder", defaultValue = "general") String folder) {
-        
+
         return uploadFile(file, folder);
     }
 
@@ -118,7 +120,8 @@ public class FileUploadController {
      */
     @GetMapping("/metadata")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<FileStorageService.FileMetadata>> getFileMetadata(@RequestParam("url") String fileUrl) {
+    public ResponseEntity<ApiResponse<FileStorageService.FileMetadata>> getFileMetadata(
+            @RequestParam("url") String fileUrl) {
         try {
             FileStorageService.FileMetadata metadata = fileStorageService.getFileMetadata(fileUrl);
             if (metadata != null) {
