@@ -2,8 +2,9 @@ package com.kuberfashion.backend.controller;
 
 import com.kuberfashion.backend.dto.ApiResponse;
 import com.kuberfashion.backend.service.FileStorageService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @RequestMapping("/api/admin/storage")
 @CrossOrigin(origins = { "http://localhost:5173", "http://127.0.0.1:5173", "https://kuberfashions.in",
         "https://www.kuberfashions.in" })
-@ConditionalOnBean(FileStorageService.class)
+@ConditionalOnProperty(name = "cloudflare.r2.enabled", havingValue = "true", matchIfMissing = false)
 public class AdminStorageController {
 
     @Autowired
