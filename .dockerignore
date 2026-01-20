@@ -1,0 +1,53 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Environment files (sensitive data)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# Local data
+data/
+
+# Test files
+*.test.*
+test-*.sh
+test-*.ps1
+test-*.py
+*.class
+
+# Documentation (not needed in image)
+*.md
+!README.md
+
+# Scripts (development only)
+*.sh
+*.ps1
+*.bat
+!start-backend.sh
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+
+# Miscellaneous
+*.pid
+*.sql
+init-scripts/
