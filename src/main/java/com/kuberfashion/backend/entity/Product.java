@@ -87,8 +87,8 @@ public class Product {
     @Column(name = "is_active", nullable = false)
     private boolean active = true;
 
-    @Column(name = "is_offer", nullable = false)
-    private boolean isOffer = false;
+    @Column(name = "is_offer", nullable = true, columnDefinition = "boolean default false")
+    private Boolean isOffer = false;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -272,12 +272,12 @@ public class Product {
         this.active = active;
     }
 
-    public boolean isOffer() {
-        return isOffer;
+    public Boolean isOffer() {
+        return isOffer != null ? isOffer : false;
     }
 
-    public void setOffer(boolean isOffer) {
-        this.isOffer = isOffer;
+    public void setOffer(Boolean isOffer) {
+        this.isOffer = isOffer != null ? isOffer : false;
     }
 
     public LocalDateTime getCreatedAt() {
