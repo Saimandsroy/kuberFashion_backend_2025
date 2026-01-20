@@ -113,29 +113,27 @@ public class DataInitializer implements CommandLineRunner {
 
     private void initializeAdminUser() {
         try {
-            // Check if admin exists
-            if (!userRepository.existsByEmail("admin@kuberfashion.com")) {
+            // Check if admin exists with the new email
+            if (!userRepository.existsByEmail("admin@kuberfashion.in")) {
                 User admin = new User();
                 admin.setFirstName("Admin");
-                admin.setLastName("User");
-                admin.setEmail("admin@kuberfashion.com");
+                admin.setLastName("KuberFashion");
+                admin.setEmail("admin@kuberfashion.in");
                 admin.setPhone("1234567890");
-                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setPassword(passwordEncoder.encode("kuberfashion2025@"));
                 admin.setRole(User.Role.ADMIN);
                 admin.setEnabled(true);
 
                 userRepository.save(admin);
                 logger.info("✅ Admin user created successfully!");
-                logger.info("   📧 Email: admin@kuberfashion.com");
-                logger.info("   🔑 Password: admin123");
-
-                if ("prod".equals(activeProfile)) {
-                    logger.warn("⚠️  SECURITY WARNING: Default admin credentials are being used in production!");
-                    logger.warn("   Please change the admin password immediately after first login.");
-                }
+                logger.info("   📧 Email: admin@kuberfashion.in");
+                logger.info("   🔑 Password: kuberfashion2025@");
             } else {
                 logger.info("✅ Admin user already exists");
             }
+
+            // Also print confirmation for console
+            System.out.println("ℹ️ Admin user already exists.");
         } catch (Exception e) {
             logger.error("❌ CRITICAL: Failed to create admin user: {}", e.getMessage());
             throw new RuntimeException("Admin user creation failed - this is critical for application functionality",
