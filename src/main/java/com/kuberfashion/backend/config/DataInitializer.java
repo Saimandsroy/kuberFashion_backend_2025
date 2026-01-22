@@ -113,8 +113,8 @@ public class DataInitializer implements CommandLineRunner {
 
     private void initializeAdminUser() {
         try {
-            // Check if admin exists with the new email
-            if (!userRepository.existsByEmail("admin@kuberfashion.in")) {
+            // Check if admin exists with the new email OR phone already in use
+            if (!userRepository.existsByEmail("admin@kuberfashion.in") && !userRepository.existsByPhone("1234567890")) {
                 User admin = new User();
                 admin.setFirstName("Admin");
                 admin.setLastName("KuberFashion");

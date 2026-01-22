@@ -18,7 +18,7 @@ public class AdminSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (!userRepository.existsByEmail("admin@kuberfashion.com")) {
+        if (!userRepository.existsByEmail("admin@kuberfashion.com") && !userRepository.existsByPhone("1234567890")) {
             User admin = new User();
             admin.setFirstName("Admin");
             admin.setLastName("User");
