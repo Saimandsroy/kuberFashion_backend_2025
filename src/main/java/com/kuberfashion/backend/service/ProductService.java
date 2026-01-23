@@ -47,7 +47,7 @@ public class ProductService {
 
     // @Cacheable(value = "products", key = "#id")
     public ProductResponseDto getProductById(Long id) {
-        logger.info(\"Fetching product with id {} from database\", id);
+        logger.info("Fetching product with id {} from database", id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         return new ProductResponseDto(product);
