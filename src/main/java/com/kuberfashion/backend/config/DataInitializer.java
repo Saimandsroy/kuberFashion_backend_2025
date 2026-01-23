@@ -42,6 +42,9 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
+
     @Value("${spring.profiles.active:dev}")
     private String activeProfile;
 
@@ -60,6 +63,16 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         try {
+            // CRITICAL: Clear cache on startup to prevent deserialization errors
+            try {
+                if (redisTemplate != null) {
+                    redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
+                    logger.info("🧹 Redis cache cleared on startup");
+                }
+            } catch (Exception e) {
+                logger.warn("⚠️ Failed to clear Redis cache on startup: {}", e.getMessage());
+            }
+
             // CRITICAL: Create admin user FIRST before anything else
             initializeAdminUser();
 

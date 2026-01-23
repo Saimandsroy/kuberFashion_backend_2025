@@ -20,46 +20,50 @@ import org.springframework.data.redis.core.RedisTemplate;
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
 public class RedisConfig {
 
-    @Bean
-    public ObjectMapper redisObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        // Enable default typing for proper deserialization - this stores type info in
-        // JSON
-        mapper.activateDefaultTyping(
-                mapper.getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL,
-                com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY);
-        return mapper;
-    }
+        @Bean
+        public ObjectMapper redisObjectMapper() {
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.registerModule(new JavaTimeModule());
+                mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+                // Enable default typing for proper deserialization - this stores type info in
+                // JSON
+                // Enable default typing for proper deserialization - this stores type info in
+                // JSON
+                mapper.activateDefaultTyping(
+                                com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator.instance,
+                                ObjectMapper.DefaultTyping.NON_FINAL,
+                                com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY);
+                return mapper;
+        }
 
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory,
-            ObjectMapper redisObjectMapper) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper);
-        StringRedisSerializer stringSerializer = new StringRedisSerializer();
+        @Bean
+        public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory,
+                        ObjectMapper redisObjectMapper) {
+                RedisTemplate<String, Object> template = new RedisTemplate<>();
+                template.setConnectionFactory(connectionFactory);
+                GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(
+                                redisObjectMapper);
+                StringRedisSerializer stringSerializer = new StringRedisSerializer();
 
-        template.setKeySerializer(stringSerializer);
-        template.setValueSerializer(jsonSerializer);
-        template.setHashKeySerializer(stringSerializer);
-        template.setHashValueSerializer(jsonSerializer);
-        template.afterPropertiesSet();
-        return template;
-    }
+                template.setKeySerializer(stringSerializer);
+                template.setValueSerializer(jsonSerializer);
+                template.setHashKeySerializer(stringSerializer);
+                template.setHashValueSerializer(jsonSerializer);
+                template.afterPropertiesSet();
+                return template;
+        }
 
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory, ObjectMapper redisObjectMapper) {
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeKeysWith(SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(
-                        SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper)))
-                .entryTtl(Duration.ofMinutes(10))
-                .prefixCacheNameWith("kf:");
-        return RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(config)
-                .build();
-    }
+        @Bean
+        public CacheManager cacheManager(RedisConnectionFactory connectionFactory, ObjectMapper redisObjectMapper) {
+                RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                                .serializeKeysWith(SerializationPair.fromSerializer(new StringRedisSerializer()))
+                                .serializeValuesWith(
+                                                SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(
+                                                                redisObjectMapper)))
+                                .entryTtl(Duration.ofMinutes(10))
+                                .prefixCacheNameWith("kf:");
+                return RedisCacheManager.builder(connectionFactory)
+                                .cacheDefaults(config)
+                                .build();
+        }
 }
